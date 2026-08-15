@@ -26,7 +26,7 @@ jobs:
     - name: Build APK using Flet
       run: |
         cd mobile_python
-        flet build apk --no-analytics
+        flet build apk
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
