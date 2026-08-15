@@ -13,6 +13,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Set up Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -26,7 +37,7 @@ jobs:
     - name: Build APK using Flet
       run: |
         cd mobile_python
-        flet build apk
+        flet build apk --yes
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
