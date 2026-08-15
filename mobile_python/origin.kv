@@ -1,0 +1,810 @@
+#:import dp kivy.metrics.dp
+#:import rtl i18n.rtl
+
+<Label>:
+    font_name: app.arabic_font
+
+<Button>:
+    font_name: app.arabic_font
+
+<TextInput>:
+    font_name: app.arabic_font
+
+<Spinner>:
+    font_name: app.arabic_font
+
+<PrimaryButton@Button>:
+    size_hint_y: None
+    height: dp(50)
+    size_hint_x: None if app.is_desktop else 1
+    width: dp(400) if app.is_desktop else self.parent.width
+    pos_hint: {'center_x': 0.5}
+    background_normal: ""
+    background_color: (0.12, 0.36, 0.86, 1)
+    color: (1, 1, 1, 1)
+    bold: True
+
+<Field@TextInput>:
+    size_hint_y: None
+    height: dp(48)
+    size_hint_x: None if app.is_desktop else 1
+    width: dp(400) if app.is_desktop else self.parent.width
+    pos_hint: {'center_x': 0.5}
+    multiline: False
+    padding: dp(12), dp(12)
+
+<MetricCard@BoxLayout>:
+    orientation: "vertical"
+    padding: dp(12)
+    spacing: dp(4)
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+
+<BootstrapScreen>:
+    name: "bootstrap"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(24)
+        spacing: dp(16)
+        Widget:
+        Label:
+            text: rtl("Origin AI")
+            color: (0.05, 0.12, 0.25, 1)
+            font_size: "28sp"
+            bold: True
+        Label:
+            text: rtl(root.status_text)
+            color: (0.3, 0.36, 0.46, 1)
+            text_size: self.width, None
+            halign: "center"
+        Field:
+            id: server_url
+            text: rtl(app.server_url)
+            hint_text: rtl("http://192.168.1.100:3000")
+        PrimaryButton:
+            text: rtl("اتصال / Connect")
+            on_release: root.connect(server_url.text)
+        Widget:
+
+<SetupScreen>:
+    name: "setup"
+    ScrollView:
+        do_scroll_x: False
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(20)
+            spacing: dp(10)
+            size_hint_y: None
+            height: max(self.minimum_height, root.height)
+            Label:
+                text: rtl("إعداد المالك الأول\nFirst-owner setup")
+                color: (.05, .12, .25, 1)
+                font_size: "22sp"
+                bold: True
+                size_hint_y: None
+                height: dp(68)
+                text_size: self.width, None
+                halign: "center"
+            Label:
+                text: rtl(root.token_help)
+                color: (.35, .4, .5, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(12)
+                text_size: self.width, None
+                halign: "center"
+            Field:
+                id: owner_name
+                hint_text: rtl("Owner display name")
+            Field:
+                id: owner_name_ar
+                hint_text: rtl("اسم المالك بالعربية")
+            Field:
+                id: owner_email
+                hint_text: rtl("Owner email")
+            Field:
+                id: owner_password
+                hint_text: rtl("Password (12+ letters and numbers)")
+                password: True
+            Field:
+                id: setup_token
+                hint_text: rtl("Setup token")
+                password: True
+            Label:
+                text: rtl(root.error_text)
+                color: (.8, .1, .1, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(8)
+                text_size: self.width, None
+            PrimaryButton:
+                text: rtl("إنشاء المالك / Create owner")
+                on_release: root.setup(owner_email.text, owner_name.text, owner_name_ar.text, owner_password.text, setup_token.text)
+            Button:
+                text: rtl("تغيير الخادم / Change server")
+                size_hint_y: None
+                height: dp(48)
+                on_release: app.root.current = "bootstrap"
+
+<LoginScreen>:
+    name: "login"
+    ScrollView:
+        do_scroll_x: False
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(24)
+            spacing: dp(14)
+            size_hint_y: None
+            height: max(self.minimum_height, root.height)
+            Widget:
+                size_hint_y: .35
+            Label:
+                text: rtl("تسجيل الدخول\nSign in")
+                color: (0.05, 0.12, 0.25, 1)
+                font_size: "24sp"
+                bold: True
+                text_size: self.width, None
+                halign: "center"
+            Field:
+                id: email
+                hint_text: rtl("Email")
+            Field:
+                id: password
+                hint_text: rtl("Password")
+                password: True
+            Label:
+                text: rtl(root.error_text)
+                color: (0.8, 0.1, 0.1, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(8)
+                text_size: self.width, None
+            PrimaryButton:
+                text: rtl("دخول / Sign in")
+                on_release: root.login(email.text, password.text)
+            Button:
+                text: rtl("إنشاء حساب / Create account")
+                size_hint_y: None
+                height: dp(48)
+                on_release: app.root.current = "register"
+            Button:
+                text: rtl("تغيير الخادم / Change server")
+                size_hint_y: None
+                height: dp(48)
+                on_release: app.open_server_settings()
+            Widget:
+                size_hint_y: .35
+
+<HomeScreen>:
+    name: "home"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(12)
+        Label:
+            text: rtl(root.welcome_text)
+            color: (0.05, 0.12, 0.25, 1)
+            font_size: "22sp"
+            bold: True
+            size_hint_y: None
+            height: dp(46)
+            text_size: self.width, None
+            halign: "right"
+        GridLayout:
+            cols: 3
+            spacing: dp(8)
+            size_hint_y: None
+            height: dp(100)
+            MetricCard:
+                Label:
+                    text: rtl(root.total_value)
+                    color: (0.05, .2, .55, 1)
+                    bold: True
+                Label:
+                    text: rtl("القيمة\nValue")
+                    color: (.35, .4, .5, 1)
+            MetricCard:
+                Label:
+                    text: rtl(root.asset_count)
+                    color: (0.05, .2, .55, 1)
+                    bold: True
+                Label:
+                    text: rtl("الأصول\nAssets")
+                    color: (.35, .4, .5, 1)
+            MetricCard:
+                Label:
+                    text: rtl(root.warranty_count)
+                    color: (0.05, .2, .55, 1)
+                    bold: True
+                Label:
+                    text: rtl("الضمان\nWarranty")
+                    color: (.35, .4, .5, 1)
+        Label:
+            text: rtl("أحدث الأصول / Recent assets")
+            color: (0.15, .2, .3, 1)
+            bold: True
+            size_hint_y: None
+            height: dp(36)
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                id: asset_list
+                cols: 1
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height
+
+
+<AssetsScreen>:
+    name: "assets"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(8)
+            Field:
+                id: search
+                hint_text: rtl("بحث / Search")
+                on_text: root.filter_assets(self.text)
+            Button:
+                text: rtl("+")
+                size_hint_x: None
+                width: dp(52)
+                on_release: app.root.current = "add_asset"
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                id: asset_list
+                cols: 1
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height
+
+
+<MarketScreen>:
+    name: "market"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: rtl("سوق الأصول المسجلة / Market")
+            color: (0.05, .12, .25, 1)
+            bold: True
+            font_size: "20sp"
+            size_hint_y: None
+            height: dp(44)
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                id: market_list
+                cols: 1
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height
+
+
+<ScannerScreen>:
+    name: "scanner"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(18)
+        spacing: dp(12)
+        Label:
+            text: rtl("مسح المنتج أو الفاتورة\nProduct / invoice scan")
+            color: (.05, .12, .25, 1)
+            bold: True
+            font_size: "22sp"
+        Spinner:
+            text: rtl("صورة المنتج / Product photo") if root.mode == "photo" else rtl("الفاتورة / Invoice")
+            values: [rtl("صورة المنتج / Product photo"), rtl("الفاتورة / Invoice")]
+            size_hint_y: None
+            height: dp(50)
+            on_text: root.mode = "invoice" if "Invoice" in self.text else "photo"
+        Button:
+            text: rtl("اختيار صورة / Choose image")
+            size_hint_y: None
+            height: dp(54)
+            on_release: root.choose_image()
+        Label:
+            text: rtl(root.selected_path) if root.selected_path else rtl("لم تُحدّد صورة بعد / No image selected")
+            color: (.35, .4, .5, 1)
+            text_size: self.width, None
+            halign: "center"
+        Label:
+            text: rtl(root.error_text)
+            color: (.72, .15, .15, 1)
+            text_size: self.width, None
+            halign: "center"
+        PrimaryButton:
+            text: rtl("تحليل وإضافة مسودة غير موثقة / Analyze unverified draft")
+            disabled: not root.selected_path
+            on_release: root.scan()
+        Button:
+            text: rtl("رجوع / Back")
+            size_hint_y: None
+            height: dp(48)
+            on_release: app.root.current = "home"
+
+<ProfileScreen>:
+    name: "profile"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(24)
+        spacing: dp(14)
+        Widget:
+
+        Label:
+            text: rtl(root.user_name)
+            color: (0.05, .12, .25, 1)
+            bold: True
+            font_size: "24sp"
+        Label:
+            text: rtl(root.user_email)
+            color: (.35, .4, .5, 1)
+        Label:
+            text: rtl(root.admin_text)
+            color: (.25, .35, .55, 1)
+            size_hint_y: None
+            height: self.texture_size[1] + dp(12)
+            text_size: self.width, None
+            halign: "center"
+        PrimaryButton:
+            text: rtl("تسجيل الخروج / Logout")
+            on_release: root.logout()
+        Button:
+            text: rtl("تغيير عنوان الخادم / Change server")
+            size_hint_y: None
+            height: dp(48)
+            on_release: app.open_server_settings()
+        Widget:
+
+<AddAssetScreen>:
+    name: "add_asset"
+    ScrollView:
+        do_scroll_x: False
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(18)
+            spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+            Label:
+                text: rtl("إضافة أصل / Add asset")
+                color: (.05, .12, .25, 1)
+                bold: True
+                font_size: "21sp"
+                size_hint_y: None
+                height: dp(46)
+            Field:
+                id: brand
+                hint_text: rtl("Brand")
+            Field:
+                id: model
+                hint_text: rtl("Model")
+            Field:
+                id: serial
+                hint_text: rtl("Serial number")
+            Field:
+                id: value
+                hint_text: rtl("Original value")
+                input_filter: "float"
+            Spinner:
+                id: category
+                text: rtl("Electronics")
+                values: ["Electronics", "Vehicles", "Luxury", "Others"]
+                size_hint_y: None
+                height: dp(48)
+            TextInput:
+                id: specs
+                hint_text: rtl("Specifications — one per line")
+                size_hint_y: None
+                height: dp(120)
+            Label:
+                text: rtl(root.error_text)
+                color: (.8, .1, .1, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(8)
+            PrimaryButton:
+                text: rtl("حفظ / Save")
+                on_release: root.save(brand.text, model.text, serial.text, value.text, category.text, specs.text)
+            Button:
+                text: rtl("إلغاء / Cancel")
+                size_hint_y: None
+                height: dp(48)
+                on_release: app.root.current = "assets"
+
+<AssetDetailScreen>:
+    name: "asset_detail"
+    ScrollView:
+        do_scroll_x: False
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(18)
+            spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+            Button:
+                text: rtl("‹  رجوع / Back")
+                size_hint_y: None
+                height: dp(44)
+                on_release: app.root.current = "assets"
+            Button:
+                text: rtl("تحديث / Refresh")
+                size_hint_y: None
+                height: dp(44)
+                on_release: root.refresh_asset()
+            Label:
+                text: rtl(root.title_text)
+                color: (.05, .12, .25, 1)
+                bold: True
+                font_size: "24sp"
+                size_hint_y: None
+                height: self.texture_size[1] + dp(16)
+                text_size: self.width, None
+            Label:
+                text: rtl(root.detail_text)
+                color: (.25, .3, .4, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(16)
+                text_size: self.width, None
+            PrimaryButton:
+                text: rtl("عرض للبيع / List for sale")
+                on_release: root.open_sale()
+            PrimaryButton:
+                text: rtl("إضافة صيانة / Add maintenance")
+                on_release: root.open_maintenance()
+            PrimaryButton:
+                text: rtl("نقل الملكية / Transfer ownership")
+                on_release: root.open_transfer()
+            PrimaryButton:
+                text: rtl("تعديل الأصل / Edit asset")
+                on_release: root.open_edit()
+            Button:
+                text: rtl("جواز الأصل العام / Public passport")
+                size_hint_y: None
+                height: dp(48)
+                on_release: root.open_passport()
+            Button:
+                text: rtl("إزالة من السوق / Unlist")
+                size_hint_y: None
+                height: dp(48)
+                disabled: not app.selected_asset.get("isForSale", False)
+                on_release: root.unlist()
+            Label:
+                text: rtl(root.operation_text)
+                color: (.75, .16, .12, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(8)
+                text_size: self.width, None
+            Button:
+                text: rtl(root.delete_label)
+                size_hint_y: None
+                height: dp(48)
+                background_color: (.72, .15, .15, 1)
+                on_release: root.delete()
+
+<EditAssetScreen>:
+    name: "edit_asset"
+    ScrollView:
+        do_scroll_x: False
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(18)
+            spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+            Label:
+                text: rtl("تعديل الأصل / Edit asset")
+                color: (.05, .12, .25, 1)
+                bold: True
+                font_size: "21sp"
+                size_hint_y: None
+                height: dp(48)
+            Field:
+                id: brand
+                hint_text: rtl("Brand")
+            Field:
+                id: model
+                hint_text: rtl("Model")
+            Field:
+                id: serial
+                hint_text: rtl("Serial number")
+            Field:
+                id: original_value
+                hint_text: rtl("Original value")
+                input_filter: "float"
+            Field:
+                id: current_value
+                hint_text: rtl("Current value")
+                input_filter: "float"
+            Spinner:
+                id: category
+                text: rtl("Others")
+                values: ["Electronics", "Vehicles", "Luxury", "Others"]
+                size_hint_y: None
+                height: dp(48)
+            Field:
+                id: warranty
+                hint_text: rtl("Warranty: YYYY-MM-DD or None")
+            Field:
+                id: image_url
+                hint_text: rtl("Image URL (optional)")
+            TextInput:
+                id: specs
+                hint_text: rtl("Specifications — one per line")
+                size_hint_y: None
+                height: dp(120)
+            Label:
+                text: rtl(root.error_text)
+                color: (.8, .1, .1, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(8)
+                text_size: self.width, None
+            PrimaryButton:
+                text: rtl("حفظ التعديلات / Save changes")
+                on_release: root.save()
+            Button:
+                text: rtl("إلغاء / Cancel")
+                size_hint_y: None
+                height: dp(48)
+                on_release: app.root.current = "asset_detail"
+
+<PassportScreen>:
+    name: "passport"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(18)
+        spacing: dp(10)
+        Button:
+            text: rtl("‹  رجوع / Back")
+            size_hint_y: None
+            height: dp(44)
+            on_release: app.root.current = "asset_detail"
+        Label:
+            text: rtl(root.title_text)
+            color: (.05, .12, .25, 1)
+            bold: True
+            font_size: "22sp"
+            size_hint_y: None
+            height: dp(52)
+            text_size: self.width, None
+        ScrollView:
+            do_scroll_x: False
+            Label:
+                text: rtl(root.detail_text)
+                color: (.25, .3, .4, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(24)
+                text_size: self.width, None
+                valign: "top"
+
+<RegisterScreen>:
+    name: "register"
+    ScrollView:
+        do_scroll_x: False
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(20)
+            spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+            Label:
+                text: rtl("إنشاء حساب / Create account")
+                color: (.05, .12, .25, 1)
+                font_size: "22sp"
+                bold: True
+                size_hint_y: None
+                height: dp(54)
+            Field:
+                id: name
+                hint_text: rtl("Display name")
+            Field:
+                id: name_ar
+                hint_text: rtl("الاسم بالعربية")
+            Field:
+                id: email
+                hint_text: rtl("Email")
+            Field:
+                id: password
+                hint_text: rtl("Password (12+ letters and numbers)")
+                password: True
+            Label:
+                text: rtl(root.error_text)
+                color: (.8, .1, .1, 1)
+                size_hint_y: None
+                height: self.texture_size[1] + dp(8)
+            PrimaryButton:
+                text: rtl("إنشاء / Create")
+                on_release: root.register(email.text, name.text, name_ar.text, password.text)
+            Button:
+                text: rtl("العودة / Back")
+                size_hint_y: None
+                height: dp(48)
+                on_release: app.root.current = "login"
+
+<TransfersScreen>:
+    name: "transfers"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: rtl("طلبات نقل الملكية / Transfers")
+            color: (.05, .12, .25, 1)
+            font_size: "21sp"
+            bold: True
+            size_hint_y: None
+            height: dp(48)
+        Label:
+            text: rtl(root.error_text)
+            color: (.8, .1, .1, 1)
+            size_hint_y: None
+            height: self.texture_size[1] + dp(6)
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                id: transfer_list
+                cols: 1
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height
+
+
+<TransferCreateScreen>:
+    name: "transfer_create"
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(18)
+        spacing: dp(10)
+        Label:
+            text: rtl("نقل الملكية / Transfer ownership")
+            color: (.05, .12, .25, 1)
+            font_size: "21sp"
+            bold: True
+        Field:
+            id: email
+            hint_text: rtl("Recipient email")
+        Label:
+            text: rtl(root.error_text)
+            color: (.8, .1, .1, 1)
+        Label:
+            text: rtl(root.code_text)
+            color: (.5, .3, .05, 1)
+            font_size: "18sp"
+            bold: True
+            text_size: self.width, None
+            halign: "center"
+        PrimaryButton:
+            text: rtl("إرسال الطلب / Send request")
+            on_release: root.submit(email.text)
+        Button:
+            text: rtl("إلغاء / Cancel")
+            size_hint_y: None
+            height: dp(48)
+            on_release: app.root.current = "asset_detail"
+
+<SimpleFormScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(18)
+        spacing: dp(10)
+        Label:
+            text: rtl(root.heading)
+            color: (.05, .12, .25, 1)
+            bold: True
+            font_size: "21sp"
+        Field:
+            id: first
+            hint_text: rtl(root.first_hint)
+        TextInput:
+            id: second
+            hint_text: rtl(root.second_hint)
+            size_hint_y: None
+            height: dp(100)
+        Label:
+            text: rtl(root.error_text)
+            color: (.8, .1, .1, 1)
+        PrimaryButton:
+            text: rtl("حفظ / Save")
+            on_release: root.submit(first.text, second.text)
+        Button:
+            text: rtl("إلغاء / Cancel")
+            size_hint_y: None
+            height: dp(48)
+            on_release: app.root.current = "asset_detail"
+
+<MainManager>:
+    orientation: "horizontal" if app.is_desktop else "vertical"
+    canvas.before:
+        Color:
+            rgba: (.965, .975, .99, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: None
+        width: dp(220) if app.is_desktop and app.user else 0
+        opacity: 1 if app.is_desktop and app.user else 0
+        disabled: not (app.is_desktop and app.user)
+        padding: dp(16)
+        spacing: dp(8)
+        canvas.before:
+            Color:
+                rgba: (1, 1, 1, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            text: rtl("Origin AI")
+            color: (0.05, 0.12, 0.25, 1)
+            font_size: "24sp"
+            bold: True
+            size_hint_y: None
+            height: dp(60)
+        Button:
+            text: rtl("الرئيسية / Home")
+            size_hint_y: None
+            height: dp(50)
+            on_release: sm.current = "home"
+        Button:
+            text: rtl("الأصول / Assets")
+            size_hint_y: None
+            height: dp(50)
+            on_release: sm.current = "assets"
+        Button:
+            text: rtl("النقل / Transfers")
+            size_hint_y: None
+            height: dp(50)
+            on_release: sm.current = "transfers"
+        Button:
+            text: rtl("السوق / Market")
+            size_hint_y: None
+            height: dp(50)
+            on_release: sm.current = "market"
+        Button:
+            text: rtl("الحساب / Profile")
+            size_hint_y: None
+            height: dp(50)
+            on_release: sm.current = "profile"
+        Widget:
+
+    BoxLayout:
+        orientation: "vertical"
+        ScreenManager:
+            id: sm
+            
+        BoxLayout:
+            size_hint_y: None
+            height: dp(58) if (not app.is_desktop and app.user and sm.current in ["home", "assets", "transfers", "market", "profile", "scanner"]) else 0
+            opacity: 1 if self.height > 0 else 0
+            disabled: self.height == 0
+            spacing: dp(4)
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                text: rtl("الرئيسية\\nHome")
+                on_release: sm.current = "home"
+            Button:
+                text: rtl("الأصول\\nAssets")
+                on_release: sm.current = "assets"
+            Button:
+                text: rtl("النقل\\nTransfers")
+                on_release: sm.current = "transfers"
+            Button:
+                text: rtl("السوق\\nMarket")
+                on_release: sm.current = "market"
+            Button:
+                text: rtl("الحساب\\nProfile")
+                on_release: sm.current = "profile"
