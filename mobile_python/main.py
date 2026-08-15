@@ -1082,8 +1082,9 @@ def main(page: ft.Page) -> None:
         else:
             _finish_bootstrap(page, result)
 
-    run_bg(startup, startup_done)
-
+   # run_bg(startup, startup_done)
+# run_bg(startup, startup_done)
+    startup_done(None, None)
 
 if __name__ == "__main__":
     ft.app(target=main)
