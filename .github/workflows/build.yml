@@ -19,10 +19,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Flutter (Fixed Version)
+      - name: Set up Flutter (Required Version)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6'
+          flutter-version: '3.44.8'
           channel: 'stable'
 
       - name: Accept Android Licenses
@@ -41,10 +41,12 @@ jobs:
       - name: Build APK File
         run: |
           cd mobile_python
-          flet build apk
+          echo "y" | flet build apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Origin_AI_App
-          path: mobile_python/build/apk/*.apk
+          path: |
+            mobile_python/build/apk/*.apk
+            mobile_python/build/app/outputs/flutter-apk/*.apk
