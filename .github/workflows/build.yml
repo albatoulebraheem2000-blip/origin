@@ -38,7 +38,18 @@ jobs:
           pip install flet
           if [ -f "mobile_python/requirements.txt" ]; then pip install -r mobile_python/requirements.txt; fi
 
-      - name: Build APK via Flet
+      - name: Create Flutter App Shell
         run: |
           cd mobile_python
-          flet build apk --yes
+          flet create --template app . || true
+
+      - name: Build APK via Flutter Direct
+        run: |
+          cd mobile_python
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Origin_AI_App
+          path: mobile_python/build/app/outputs/flutter-apk/app-release.apk
