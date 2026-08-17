@@ -1,4 +1,5 @@
 name: Build Android APK
+
 on:
   push:
     branches: [ main, master ]
@@ -7,37 +8,36 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'
 
-      - name: Install System Dependencies
+      - name: Install Flet
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y build-essential git libffi-dev libssl-dev zlib1g-dev zip unzip wget curl openjdk-17-jdk
-          
-      - name: Install Python Dependencies
-        run: |
-          pip install --upgrade pip
-          pip install flet requests urllib3
-
-      - name: Setup Flutter
-        run: |
-          wget -q https://storage.googleapis.com/flutter-infra-release/releases/stable/linux/flutter_linux_3.22.3-stable.tar.xz
-          tar xf flutter_linux_3.22.3-stable.tar.xz -C $HOME
-          echo "$HOME/flutter/bin" >> $GITHUB_PATH
+          python -m pip install --upgrade pip
+          pip install flet
 
       - name: Build APK
-        working-directory: mobile_python
-        run: flet build apk
+        run: |
+          if [ -d "mobile_python" ]; then cd mobile_python; fi
+          flet build apk --yes
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: origin-ai-apk
-          path: mobile_python/build/apk/*.apk
+          name: app-release.apk
+          path: |
+            mobile_python/build/apk/*.apk
+            build/apk/*.apk
